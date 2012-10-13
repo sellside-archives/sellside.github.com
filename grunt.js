@@ -22,7 +22,7 @@ module.exports = function(grunt) {
     },
 
     lint: {
-      all: ['grunt.js', 'tasks/*.js', '<config:nodeunit.tasks>', 'assets/js/*.js']
+      all: ['grunt.js', 'tasks/*.js', '<config:nodeunit.tasks>', 'assets/js/custom/*.js']
     },
 
     jshint: {
@@ -53,14 +53,33 @@ module.exports = function(grunt) {
     },
 
     // Concatenate 
-    // -----------
+    // -------------------------------------
 
     concat: {
       docs: {
-        src: ['<%= project.js %>/bootstrap/application.js', '<%= project.js %>/custom/*.js'],
-        dest: '<%= project.js %>/project.js'
+        src: [
+              '<%= project.js %>/jquery.js', 
+              '<%= project.js %>/bootstrap/bootstrap.min.js', 
+              '<%= project.js %>/plugins/*.js', 
+              '<%= project.js %>/bootstrap/application.js', 
+              '<%= project.js %>/prettify/prettify.js', 
+              '<%= project.js %>/custom/*.js'
+        ],
+        dest: '<%= project.js %>/docs.js'
+      },
+      prod: {
+        src: [
+              '<%= project.js %>/jquery.js', 
+              '<%= project.js %>/bootstrap/bootstrap.min.js', 
+              '<%= project.js %>/plugins/*.js', 
+              '<%= project.js %>/bootstrap/application.js', // for now leave application.js in, until overwritten with our own code
+              '<%= project.js %>/prettify/prettify.js', 
+              '<%= project.js %>/custom/*.js'
+        ],
+        dest: '<%= project.js %>/production.js'
       }
     },
+
 
     append: {
       html: {
@@ -82,68 +101,56 @@ module.exports = function(grunt) {
     less: {
       docs: {
         options: {
-          paths: ['assets','assets/less','assets/css'], // alternate include paths for imports, such as variables
+          paths: ['assets','<%= project.less %>','<%= project.less %>/tookit','<%= project.less %>/bootstrap'], // alternate include paths for imports, such as variables
           yuicompress: false,
           compress: false
         },
         files: {
-          "assets/css/project.css": ['assets/project.less']
+          "<%= project.css %>/project.css": ['assets/project.less'],
+          "<%= project.css %>/project-fail.css": ['assets/project.less']
         }
+      },
+      comps: {
+        options: {
+          paths: ['assets','<%= project.less %>','<%= project.less %>/bootstrap','<%= project.less %>/toolkit'], // alternate include paths for imports, such as variables
+          yuicompress: false,
+          compress: false
+        },
+        files: {
+          "<%= project.css %>/alerts.css": ['<%= project.less %>/alerts.less'],
+          "<%= project.css %>/buttons.css": ['<%= project.less %>/buttons.less']
+        }
+      },
+      min: {
+        options: {
+          paths: ['assets/css'], 
+          yuicompress: true
+        },
+        files: {
+          "<%= project.css %>/project.min.css": ['<%= project.css %>/project.css']  // "assets/css/<%= kit.name %>-<%= kit.version %>.css": "assets/less/concat/<%= kit.name %>.less",
+        }
+      }
+    },
+        
+
+    // Recess
+    recess: {
+      pass: {
+        src: '<%= project.css %>/project.css'
+      },
+      fail: {
+        src: '<%= project.css %>/project-fail.css'
       }
     },
 
-/*
-    // Configuration to be run (and then tested).
-    less: {
-      components: {
-        options: {
-          paths: ['assets/less'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
-        },
-        files: {
-          "assets/css/<%= kit.name %>-<%= kit.version %>.css": "assets/less/concat/<%= kit.name %>.less"
-        }
-      },
-      docs: {
-        options: {
-          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
-        },
-        files: {
-          "assets/css/docs.css": ['assets/docs.less']
-        }
-      },
-      production: {
-        options: {
-          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
-        },
-        files: {
-          "assets/css/sellside.css": "assets/sellside.less",
-          "assets/css/sellside-responsive.css": "assets/sellside-responsive.less"        
-        }
-      },
-      website: {
-        options: {
-          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
-        },
-        files: {
-          "assets/css/sellside-website.css": ['assets/sellside-website.less', 'assets/sellside-responsive.less']
-        }
-      }
-    },
-*/
     // Watch
     // -----
 
     watch: {
-      files: [ 'assets/**/*.*' ], // 'less/.*\.less'
-      tasks: 'concat less'
+      docs: {
+        files: [ 'assets/**/*.*' ], // 'less/.*\.less'
+        tasks: 'append:html concat less:docs'
+      }
     },
 
     // Unit tests.
@@ -178,11 +185,11 @@ module.exports = function(grunt) {
 
   // plugin's task(s), then test the result.
   grunt.renameTask('test', 'nodeunit');
-
-  // grunt.registerTask('test', 'clean less nodeunit');
-  grunt.registerTask('test', 'less nodeunit');
+  grunt.registerTask('test', 'less nodeunit'); 
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', 'append concat less watch');
+  grunt.registerTask('default', 'lint append:html concat less:docs watch');
+  grunt.registerTask('recess', 'append:html concat less:docs recess:fail watch');
+  grunt.registerTask('full', 'append concat less watch');
 
 };
