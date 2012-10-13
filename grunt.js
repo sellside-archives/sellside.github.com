@@ -97,17 +97,20 @@ module.exports = function(grunt) {
       }
     },
 
-    // Less
+
+    // LESS 
+    // -------------------------------------
+
     less: {
       docs: {
         options: {
-          paths: ['assets','<%= project.less %>','<%= project.less %>/tookit','<%= project.less %>/bootstrap'], // alternate include paths for imports, such as variables
+         // paths: ['assets','<%= project.less %>','<%= project.less %>/tookit','<%= project.less %>/bootstrap'], // alternate include paths for imports, such as variables
+          paths: ['assets','assets/less','assets/less/tookit','assets/less/bootstrap'], // alternate include paths for imports, such as variables
           yuicompress: false,
           compress: false
         },
         files: {
-          "<%= project.css %>/project.css": ['assets/project.less'],
-          "<%= project.css %>/project-fail.css": ['assets/project.less']
+          "<%= project.css %>/project-unlinted.css": ['assets/project.less']
         }
       },
       comps: {
@@ -131,15 +134,48 @@ module.exports = function(grunt) {
         }
       }
     },
-        
 
-    // Recess
+
+    // RECESS
+    // -------------------------------------
+
     recess: {
       pass: {
-        src: '<%= project.css %>/project.css'
+        src: '<%= project.css %>/project-unlinted.css',
+        dest: '<%= project.css %>/project.css',
+        options: {
+          compile: true,
+          compress: false,
+          noIDs: true,
+          noJSPrefix: true,
+          noOverqualifying: true,
+          noUnderscores: true,
+          noUniversalSelectors: true,
+          prefixWhitespace: true,
+          strictPropertyOrder: true,
+          stripColors: true,
+          zeroUnits: true
+        }
+      },
+      minify: {
+        src: '<%= project.css %>/project-unlinted.css',
+        dest: '<%= project.css %>/project.css',
+        options: {
+          compile: true,
+          compress: true,
+          noIDs: true,
+          noJSPrefix: true,
+          noOverqualifying: true,
+          noUnderscores: true,
+          noUniversalSelectors: true,
+          prefixWhitespace: true,
+          strictPropertyOrder: true,
+          stripColors: true,
+          zeroUnits: true
+        }
       },
       fail: {
-        src: '<%= project.css %>/project-fail.css'
+        src: '<%= project.css %>/project-unlinted.css'
       }
     },
 
@@ -181,15 +217,15 @@ module.exports = function(grunt) {
 
 
   // Actually load this plugin's task(s).
-  grunt.loadTasks('../node_modules/tasks');
+  grunt.loadTasks('tasks');
+  grunt.loadNpmTasks('grunt-contrib');
 
   // plugin's task(s), then test the result.
   grunt.renameTask('test', 'nodeunit');
   grunt.registerTask('test', 'less nodeunit'); 
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', 'lint append:html concat less:docs watch');
-  grunt.registerTask('recess', 'append:html concat less:docs recess:fail watch');
-  grunt.registerTask('full', 'append concat less watch');
+  grunt.registerTask('default', 'append:html concat less:docs recess:pass watch');
+  grunt.registerTask('min', 'append:html concat less:docs recess:minify watch');
 
 };
