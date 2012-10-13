@@ -56,9 +56,8 @@ module.exports = function(grunt) {
     // -----------
 
     concat: {
-
-      extras: {
-        src: ['<%= project.js %>/bootstrap/application.js', '<%= project.js %>/custom.js'],
+      docs: {
+        src: ['<%= project.js %>/bootstrap/application.js', '<%= project.js %>/custom/*.js'],
         dest: '<%= project.js %>/project.js'
       }
     },
@@ -81,9 +80,9 @@ module.exports = function(grunt) {
 
     // Less
     less: {
-      theme: {
+      docs: {
         options: {
-          paths: ['assets','assets/css','assets/less'], // alternate include paths for imports, such as variables
+          paths: ['assets','assets/less','assets/css'], // alternate include paths for imports, such as variables
           yuicompress: false,
           compress: false
         },
@@ -93,11 +92,57 @@ module.exports = function(grunt) {
       }
     },
 
+/*
+    // Configuration to be run (and then tested).
+    less: {
+      components: {
+        options: {
+          paths: ['assets/less'], // alternate include paths for imports, such as variables
+          yuicompress: false,
+          compress: false
+        },
+        files: {
+          "assets/css/<%= kit.name %>-<%= kit.version %>.css": "assets/less/concat/<%= kit.name %>.less"
+        }
+      },
+      docs: {
+        options: {
+          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
+          yuicompress: false,
+          compress: false
+        },
+        files: {
+          "assets/css/docs.css": ['assets/docs.less']
+        }
+      },
+      production: {
+        options: {
+          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
+          yuicompress: false,
+          compress: false
+        },
+        files: {
+          "assets/css/sellside.css": "assets/sellside.less",
+          "assets/css/sellside-responsive.css": "assets/sellside-responsive.less"        
+        }
+      },
+      website: {
+        options: {
+          paths: ['assets/less', 'assets/less/extensions'], // alternate include paths for imports, such as variables
+          yuicompress: false,
+          compress: false
+        },
+        files: {
+          "assets/css/sellside-website.css": ['assets/sellside-website.less', 'assets/sellside-responsive.less']
+        }
+      }
+    },
+*/
     // Watch
     // -----
 
     watch: {
-      files: [ '<config:lint.files>', 'assets/**/*.*' ], // 'less/.*\.less'
+      files: [ 'assets/**/*.*' ], // 'less/.*\.less'
       tasks: 'concat less'
     },
 
@@ -138,6 +183,6 @@ module.exports = function(grunt) {
   grunt.registerTask('test', 'less nodeunit');
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', 'append concat less');
+  grunt.registerTask('default', 'append concat less watch');
 
 };
