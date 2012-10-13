@@ -80,7 +80,6 @@ module.exports = function(grunt) {
       }
     },
 
-
     append: {
       html: {
         header: '<%= project.partials %>/head.html',
@@ -106,18 +105,16 @@ module.exports = function(grunt) {
         options: {
          // paths: ['assets','<%= project.less %>','<%= project.less %>/tookit','<%= project.less %>/bootstrap'], // alternate include paths for imports, such as variables
           paths: ['assets','assets/less','assets/less/tookit','assets/less/bootstrap'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
+          yuicompress: false
         },
         files: {
           "<%= project.css %>/project-unlinted.css": ['assets/project.less']
         }
       },
-      comps: {
+      components: {
         options: {
           paths: ['assets','<%= project.less %>','<%= project.less %>/bootstrap','<%= project.less %>/toolkit'], // alternate include paths for imports, such as variables
-          yuicompress: false,
-          compress: false
+          yuicompress: false
         },
         files: {
           "<%= project.css %>/alerts.css": ['<%= project.less %>/alerts.less'],
@@ -144,34 +141,37 @@ module.exports = function(grunt) {
         src: '<%= project.css %>/project-unlinted.css',
         dest: '<%= project.css %>/project.css',
         options: {
-          compile: true,
-          compress: false,
-          noIDs: true,
-          noJSPrefix: true,
-          noOverqualifying: true,
-          noUnderscores: true,
-          noUniversalSelectors: true,
-          prefixWhitespace: true,
-          strictPropertyOrder: true,
-          stripColors: true,
-          zeroUnits: true
+          compile: true,               // Compiles CSS or LESS. Fixes white space and sort order
+          compress: false,             // Compress your compiled code
+          noIDs: true,                 // Doesn't complain about using IDs in your stylesheets
+          noJSPrefix: true,            // Doesn't complain about styling .js- prefixed classnames
+          noOverqualifying: true,      // Doesn't complain about overqualified selectors (ie: div#foo.bar)
+          noUnderscores: true,         // Doesn't complain about using underscores in your class names
+          noUniversalSelectors: true,  // Doesn't complain about using the universal * selector
+          prefixWhitespace: true,      // Adds whitespace prefix to line up vender prefixed properties
+          strictPropertyOrder: true,   // Complains if not strict property order
+          stripColors: false,          // Strip colors from the Terminal output
+          zeroUnits: true              // Doesn't complain if you add units to values of 0
         }
+        // files: {
+        //   "<%= project.css %>/project.css": ['<%= project.css %>/project-unlinted.css']  // "assets/css/<%= kit.name %>-<%= kit.version %>.css": "assets/less/concat/<%= kit.name %>.less",
+        // }
       },
       minify: {
         src: '<%= project.css %>/project-unlinted.css',
         dest: '<%= project.css %>/project.css',
         options: {
-          compile: true,
-          compress: true,
-          noIDs: true,
-          noJSPrefix: true,
-          noOverqualifying: true,
-          noUnderscores: true,
-          noUniversalSelectors: true,
-          prefixWhitespace: true,
-          strictPropertyOrder: true,
-          stripColors: true,
-          zeroUnits: true
+          compile: true,               // Compiles CSS or LESS. Fixes white space and sort order
+          compress: true,              // Compress your compiled code
+          noIDs: true,                 // Doesn't complain about using IDs in your stylesheets
+          noJSPrefix: true,            // Doesn't complain about styling .js- prefixed classnames
+          noOverqualifying: true,      // Doesn't complain about overqualified selectors (ie: div#foo.bar)
+          noUnderscores: true,         // Doesn't complain about using underscores in your class names
+          noUniversalSelectors: true,  // Doesn't complain about using the universal * selector
+          prefixWhitespace: true,      // Adds whitespace prefix to line up vender prefixed properties
+          strictPropertyOrder: true,   // Complains if not strict property order
+          stripColors: false,          // Strip colors from the Terminal output
+          zeroUnits: true              // Doesn't complain if you add units to values of 0
         }
       },
       fail: {
@@ -225,7 +225,8 @@ module.exports = function(grunt) {
   grunt.registerTask('test', 'less nodeunit'); 
 
   // By default, lint and run all tests.
-  grunt.registerTask('default', 'append:html concat less:docs recess:pass watch');
+  grunt.registerTask('default', 'append:html concat:prod less:docs recess:pass watch');
+  grunt.registerTask('components', 'append:html concat:components less:components');
   grunt.registerTask('min', 'append:html concat less:docs recess:minify watch');
 
 };
