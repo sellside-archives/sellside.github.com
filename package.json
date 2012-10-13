@@ -1,14 +1,22 @@
 {
-    "name": "Sellside Open Source",
+    "name": "sellside-open-source",
     "description": "Open source projects brought to you by the folks at Sellside.com",
     "version": "0.1.0",
     "keywords": ["sellside", "sellside open source", "toolkit", "assemble", "dry", "pre", "begin"],
     "homepage": "http://sellside.com/open-source",
     "author": "Sellside Inc.",
+    "readme": "README.md",
     "licenses": [
         {
             "type": "Apache-2.0",
             "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
         }
-    ]
+    ],
+    "engines": {
+        "node": "0.8.x",
+        "npm": "1.1.x"
+    },
+    "devDependencies": {
+        "public": "https://github.com/twitter/bootstrap/tarball/2.1.2-wip"
+    }
 }
